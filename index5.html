@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Sister's Day 💚</title>
+
+  <!-- Google Fonts & Canvas Confetti -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    /* ==========================================================================
+       DESIGN SYSTEM & GLOBAL STYLES (COOL GREEN THEME)
+       ========================================================================== */
+    :root {
+      --primary: #10B981;       /* Cool Emerald Green */
+      --secondary: #6EE7B7;     /* Mint Accent */
+      --accent: #064E3B;        /* Deep Forest Green for headings */
+      --background: #F0FDF4;    /* Light Mint Soft Background */
+      --text: #1F2937;
+      --text-light: #4B5563;
+      --glass-bg: rgba(255, 255, 255, 0.75);
+      --glass-border: rgba(255, 255, 255, 0.9);
+      --glass-shadow: 0 8px 32px 0 rgba(16, 185, 129, 0.15);
+      --font-sans: 'Inter', sans-serif;
+      --font-serif: 'Playfair Display', serif;
+      --font-handwriting: 'Dancing Script', cursive;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background-color: var(--background);
+      color: var(--text);
+      font-family: var(--font-sans);
+      overflow-x: hidden;
+    }
+
+    body {
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    .glass-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--glass-shadow);
+      border-radius: 24px;
+    }
+
+    section {
+      min-height: 100vh;
+      width: 100%;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 20px;
+    }
+
+    /* ==========================================================================
+       TEXT ANIMATIONS & SHIMMER EFFECTS
+       ========================================================================== */
+    .section-title {
+      font-family: var(--font-serif);
+      font-size: clamp(2.5rem, 5vw, 3.8rem);
+      text-align: center;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #064E3B 0%, #10B981 50%, #047857 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shineText 6s ease infinite;
+    }
+
+    @keyframes shineText {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .section-subtitle {
+      font-size: 1.1rem;
+      color: var(--text-light);
+      text-align: center;
+      margin-bottom: 60px;
+      max-width: 600px;
+    }
+
+    /* Reveal Animation Classes */
+    .reveal-text {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .reveal-text.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Loader */
+    #loader {
+      position: fixed;
+      inset: 0;
+      background: var(--background);
+      z-index: 99999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.8s ease, visibility 0.8s ease;
+    }
+
+    .loader-heart {
+      font-size: 4rem;
+      color: var(--primary);
+      animation: pulse 1.2s ease-in-out infinite;
+      margin-bottom: 24px;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.25); }
+    }
+
+    .loader-text {
+      font-family: var(--font-serif);
+      font-size: 1.25rem;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+
+    .progress-bar-container {
+      width: 240px;
+      height: 6px;
+      background: rgba(16, 185, 129, 0.15);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      transition: width 0.3s ease;
+      border-radius: 10px;
+    }
+
+    /* Hero Aurora Background & Text Animation */
+    .aurora-bg {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      z-index: 0;
+    }
+
+    .aurora-blob {
+      position: absolute;
+      filter: blur(80px);
+      opacity: 0.5;
+      border-radius: 50%;
+      animation: aurora 15s ease infinite alternate;
+    }
+
+    .aurora-1 { width: 400px; height: 400px; background: var(--primary); top: -100px; left: -100px; }
+    .aurora-2 { width: 500px; height: 500px; background: var(--secondary); bottom: -150px; right: -100px; animation-delay: -5s; }
+    .aurora-3 { width: 350px; height: 350px; background: #A7F3D0; top: 40%; left: 50%; animation-delay: -10s; }
+
+    @keyframes aurora {
+      0% { transform: translate(0%, 0%) scale(1); }
+      50% { transform: translate(15%, 15%) scale(1.2); }
+      100% { transform: translate(-10%, -5%) scale(1); }
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      max-width: 800px;
+      padding: 50px 40px;
+    }
+
+    .hero-heading {
+      font-family: var(--font-serif);
+      font-size: clamp(3rem, 7vw, 5.5rem);
+      line-height: 1.1;
+      color: var(--accent);
+      margin-bottom: 20px;
+      animation: floatHeading 4s ease-in-out infinite;
+    }
+
+    @keyframes floatHeading {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .typing-container {
+      font-size: clamp(1.2rem, 3vw, 1.8rem);
+      color: var(--primary);
+      font-weight: 600;
+      min-height: 2.5rem;
+      margin-bottom: 16px;
+      letter-spacing: 0.5px;
+    }
+
+    .typing-cursor {
+      display: inline-block;
+      width: 3px;
+      height: 1.1em;
+      background-color: var(--primary);
+      margin-left: 4px;
+      animation: blink 0.8s infinite;
+      vertical-align: middle;
+      border-radius: 2px;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    .hero-subheading {
+      font-size: 1.1rem;
+      color: var(--text-light);
+      margin-bottom: 40px;
+    }
+
+    .scroll-indicator {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: var(--primary);
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    /* Timeline */
+    .timeline {
+      position: relative;
+      max-width: 800px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--primary), var(--secondary), var(--accent));
+      transform: translateX(-50%);
+    }
+
+    .timeline-item {
+      position: relative;
+      width: 50%;
+      padding: 20px 40px;
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .timeline-item.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .timeline-item.left { left: 0; text-align: right; }
+    .timeline-item.right { left: 50%; text-align: left; }
+
+    .timeline-dot {
+      position: absolute;
+      top: 30px;
+      width: 18px;
+      height: 18px;
+      background: var(--primary);
+      border: 4px solid var(--background);
+      border-radius: 50%;
+      z-index: 2;
+    }
+
+    .left .timeline-dot { right: -9px; }
+    .right .timeline-dot { left: -9px; }
+
+    .timeline-card { padding: 24px; transition: transform 0.3s ease; }
+    .timeline-card:hover { transform: translateY(-5px); }
+    .timeline-date { font-size: 0.85rem; color: var(--primary); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+    .timeline-title { font-family: var(--font-serif); font-size: 1.4rem; color: var(--accent); margin-bottom: 8px; }
+    .timeline-desc { font-size: 0.95rem; color: var(--text-light); }
+
+    /* Counter */
+    .counter-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      width: 100%;
+      max-width: 800px;
+    }
+
+    .counter-box { text-align: center; padding: 30px 10px; }
+    .counter-number { font-family: var(--font-serif); font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 700; color: var(--primary); line-height: 1; }
+    .counter-label { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-light); margin-top: 8px; }
+
+    /* Reasons Cards Grid */
+    .reasons-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 16px;
+      width: 100%;
+      max-width: 1100px;
+      max-height: 600px;
+      overflow-y: auto;
+      padding: 10px;
+    }
+
+    .reason-card { height: 120px; perspective: 1000px; cursor: pointer; }
+    .reason-card-inner {
+      position: relative; width: 100%; height: 100%; text-align: center;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-style: preserve-3d; border-radius: 16px;
+    }
+
+    .reason-card.flipped .reason-card-inner { transform: rotateY(180deg); }
+
+    .reason-front, .reason-back {
+      position: absolute; inset: 0; backface-visibility: hidden;
+      display: flex; align-items: center; justify-content: center;
+      padding: 12px; border-radius: 16px;
+    }
+
+    .reason-front { background: rgba(255, 255, 255, 0.85); border: 1px solid rgba(16, 185, 129, 0.25); font-weight: 600; color: var(--primary); }
+    .reason-back { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; transform: rotateY(180deg); font-size: 0.85rem; line-height: 1.3; }
+
+    /* Garden Canvas */
+    #garden-canvas { position: absolute; inset: 0; width: 100%; height: 100%; cursor: pointer; z-index: 1; }
+    .garden-overlay-text { position: relative; z-index: 2; pointer-events: none; }
+
+    /* Envelopes */
+    .envelopes-wrapper { display: flex; gap: 30px; flex-wrap: wrap; justify-content: center; }
+    .envelope-card {
+      width: 220px; height: 150px; background: #D1FAE5; border-radius: 12px;
+      border: 2px solid var(--primary); display: flex; flex-direction: column;
+      align-items: center; justify-content: center; cursor: pointer; transition: transform 0.3s ease;
+    }
+    .envelope-card:hover { transform: translateY(-8px) scale(1.03); }
+    .envelope-icon { font-size: 2.5rem; margin-bottom: 8px; }
+
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(8px);
+      z-index: 1000; display: flex; align-items: center; justify-content: center;
+      opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+    }
+    .modal-overlay.active { opacity: 1; pointer-events: auto; }
+    .modal-content {
+      background: #FFF; padding: 40px; border-radius: 20px; max-width: 500px; width: 90%;
+      text-align: center; font-family: var(--font-handwriting); font-size: 1.8rem; color: var(--accent);
+      transform: scale(0.8); transition: transform 0.3s ease;
+    }
+    .modal-overlay.active .modal-content { transform: scale(1); }
+
+    /* Animated Notebook Paper */
+    .notebook-paper {
+      background: #FFF;
+      background-image: linear-gradient(#ECFDF5 1px, transparent 1px);
+      background-size: 100% 32px;
+      line-height: 32px;
+      padding: 40px 40px 40px 60px;
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      border-left: 3px solid var(--primary);
+      max-width: 700px;
+      width: 100%;
+      font-family: var(--font-handwriting);
+      font-size: 1.6rem;
+      color: var(--accent);
+    }
+
+    .promise-list { list-style: none; }
+    .promise-item { 
+      margin-bottom: 16px; 
+      opacity: 0; 
+      transform: translateX(-30px); 
+      transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1); 
+    }
+    .promise-item.visible { 
+      opacity: 1; 
+      transform: translateX(0); 
+    }
+
+    /* Final Letter Card & Text Animation */
+    .final-letter-card { max-width: 750px; width: 100%; padding: 60px; background: #F0FDF4; border: 1px solid #A7F3D0; }
+    .final-letter-text { 
+      font-family: var(--font-handwriting); 
+      font-size: 1.8rem; 
+      color: var(--accent); 
+      white-space: pre-line; 
+      line-height: 1.8; 
+      min-height: 200px;
+    }
+
+    /* Surprise Button */
+    .btn-surprise {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white; font-size: 1.4rem; font-weight: 700; padding: 20px 48px;
+      border-radius: 50px; border: none; cursor: pointer; box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .btn-surprise:hover { transform: scale(1.08); box-shadow: 0 15px 40px rgba(16, 185, 129, 0.6); }
+
+    /* Ending Section */
+    #ending { background: linear-gradient(to bottom, #062C1E, #022014); color: #FFFFFF; overflow: hidden; }
+    .ending-title { font-family: var(--font-serif); font-size: clamp(3rem, 6vw, 4.5rem); color: #6EE7B7; margin-bottom: 16px; text-align: center; }
+    .ending-sub { font-size: 1.3rem; opacity: 0.85; margin-bottom: 24px; text-align: center; }
+    .ending-heart { font-size: 3rem; color: var(--primary); text-align: center; }
+
+    @media (max-width: 768px) {
+      .timeline::before { left: 20px; }
+      .timeline-item { width: 100%; padding-left: 50px; text-align: left !important; }
+      .timeline-item.right { left: 0; }
+      .left .timeline-dot, .right .timeline-dot { left: 11px; }
+      .counter-grid { grid-template-columns: repeat(2, 1fr); }
+      .final-letter-card { padding: 30px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Loader -->
+  <div id="loader">
+    <div class="loader-heart">💚</div>
+    <div class="loader-text">Loading memories...</div>
+    <div class="progress-bar-container">
+      <div class="progress-bar" id="progress-bar"></div>
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <section id="hero">
+    <div class="aurora-bg">
+      <div class="aurora-blob aurora-1"></div>
+      <div class="aurora-blob aurora-2"></div>
+      <div class="aurora-blob aurora-3"></div>
+    </div>
+    <div class="hero-content glass-card">
+      <h1 class="hero-heading">Happy Sister's Day 💚</h1>
+      <div class="typing-container">
+        <span id="typing-text"></span><span class="typing-cursor"></span>
+      </div>
+      <p class="hero-subheading reveal-text">Meri tin cute diamonds ke liye chota sa gift:)</p>
+      <a href="#timeline" class="scroll-indicator">
+        <span>Scroll Down</span>
+        ↓
+      </a>
+    </div>
+  </section>
+
+  <!-- Story Timeline -->
+  <section id="timeline">
+    <h2 class="section-title reveal-text">Our Journey</h2>
+    <p class="section-subtitle reveal-text">A walk down memory lane with my favorite persons</p>
+    <div class="timeline" id="timeline-container"></div>
+  </section>
+
+  <!-- Sisterhood Counter -->
+  <section id="counter">
+    <h2 class="section-title reveal-text">Time Kafi teez Aage Badh Raha Hai</h2>
+    <p class="section-subtitle reveal-text">Like Kabhi Andaza Bhi Nahi Tha KI Hum Itne Time Tak Sath Rahe Ge Itna Time Tak Mere Sath Koi Bhi Nahi Raha Isliye Mere Liye Aap Tino Bahut Special Ho :)</p>
+    <div class="counter-grid">
+      <div class="counter-box glass-card reveal-text">
+        <div class="counter-number" id="count-days">00</div>
+        <div class="counter-label">Days</div>
+      </div>
+      <div class="counter-box glass-card reveal-text">
+        <div class="counter-number" id="count-hours">00</div>
+        <div class="counter-label">Hours</div>
+      </div>
+      <div class="counter-box glass-card reveal-text">
+        <div class="counter-number" id="count-minutes">00</div>
+        <div class="counter-label">Minutes</div>
+      </div>
+      <div class="counter-box glass-card reveal-text">
+        <div class="counter-number" id="count-seconds">00</div>
+        <div class="counter-label">Seconds</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reasons Grid -->
+  <section id="reasons">
+    <h2 class="section-title reveal-text">Reasons You're The Best</h2>
+    <p class="section-subtitle reveal-text">Click any card to reveal a reason</p>
+    <div class="reasons-grid" id="reasons-container"></div>
+  </section>
+
+  <!-- Heart Garden -->
+  <section id="garden">
+    <canvas id="garden-canvas"></canvas>
+    <div class="garden-overlay-text">
+      <h2 class="section-title reveal-text">Interactive Heart Garden</h2>
+      <p class="section-subtitle reveal-text">Click anywhere on the screen to blossom love</p>
+    </div>
+  </section>
+
+  <!-- Secret Letters -->
+  <section id="letters">
+    <h2 class="section-title reveal-text">Secret Notes</h2>
+    <p class="section-subtitle reveal-text">Open them up to read hidden messages</p>
+    <div class="envelopes-wrapper" id="envelopes-container"></div>
+  </section>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="letter-modal">
+    <div class="modal-content glass-card">
+      <p id="modal-text">Message goes here...</p>
+      <button onclick="closeModal()" style="margin-top: 20px; padding: 10px 28px; border-radius: 20px; border: none; background: var(--primary); color: white; cursor: pointer; font-family: var(--font-sans); font-size: 0.95rem; font-weight: 600;">Close</button>
+    </div>
+  </div>
+
+  <!-- Promises -->
+  <section id="promises">
+    <h2 class="section-title reveal-text">My Promises To You</h2>
+    <p class="section-subtitle reveal-text">Written in my heart, forever kept</p>
+    <div class="notebook-paper">
+      <ul class="promise-list" id="promises-container"></ul>
+    </div>
+  </section>
+
+  <!-- Final Letter with Typewriter Animation -->
+  <section id="final-letter">
+    <h2 class="section-title reveal-text">A Letter From My Heart</h2>
+    <div class="final-letter-card glass-card reveal-text">
+      <p class="final-letter-text" id="final-letter-typed"></p>
+    </div>
+  </section>
+
+  <!-- Final Surprise -->
+  <section id="surprise">
+    <h2 class="section-title reveal-text">One Last Thing...</h2>
+    <p class="section-subtitle reveal-text">Whatever you do, please isko click na krna.</p>
+    <button class="btn-surprise reveal-text" onclick="triggerSurprise()">Click noiiii 🤫</button>
+  </section>
+
+  <!-- Ending Section -->
+  <section id="ending">
+    <div class="ending-title reveal-text">Happy Sister's Day! 💚</div>
+    <div class="ending-sub reveal-text">And ha future me or bhi kaate aaye ge hamari bong me kyu ki mene insaan bhi gulab jese chose kiye hai :).</div>
+    <div class="ending-heart reveal-text">Stay Happy Ur Brother Is Always With You :)!</div>
+  </section>
+
+  <!-- JavaScript Engine -->
+  <script>
+    /* Data Sources */
+    const memories = [
+      { date: "Chapter 1", title: "Hamari Pehli Meet Up", desc: "Yk me sabse pehle dem se mila tha and fir hamari bonding kuch dino me hi aachi hogai thi d:." },
+      { date: "Chapter 2", title: "Moheen & Emuu", desc: "In dono se bhi me dem ki wajh se hi mil paya tha and pehle meet up me hi inse meri larhai hogai thi but fun way me :)." },
+      { date: "Chapter 3", title: "The Best Persons In My Life ", desc: "Yk jab aap tino mujhe mile the me itna happy tha like ye uss year ka best time tha." },
+      { date: "Chapter 4", title: "Unbreakable Bond", desc: "Hamara bong to kafi kam time me hi strong hogya tha me aap logo se milne ke baad khud ko kafi lucky feel krta hu." }
+    ];
+
+    const secretMessages = [
+      "Aap tino jesi sister jisko mile usko jannat dhudhne ki zarurat hi kya already mil chuka :).",
+      "Aap tino ne hamesha mujhe samja meri galtiyo ko maaf kiya iske liye tysmmm :).",
+      "Aap tino ne hamesha mujhe support kiya aap tino ne hamesha mujhe bade bhai ki trh treat kiya mujhe kabhi bhi bahen ki kami mahesus nahi hone di!",
+      "Aap tino mere liye sab kuch ho mere pass words nahi hai ki me explain kr saku :).",
+      "And ik ki aap tino bhi mujhse utna hi attached ho jitna me hu and ye koi buri baat nahi hai hamne hamesha ek dusre ke liye aacha hi socha hai."
+    ];
+
+    const promises = [
+      "I promise ki me hamesha aapke sath rahuga permanent :).",
+      "I promise ki me har situation me aapke sath rahuga chahe kitni bhi muskil aaye!).",
+      "I promise ki me hamesha aapke sath masi mazak krta rahuga but mana bhi luga :).",
+      "I promise ki moheen ke per pakad ke gol gol ghuma ke emuu pe fekduga :).",
+      "I promise ki me aap tino se hamesha attach rahuga and hamesha sach boluga :)!"
+    ];
+
+    const letterText = `To My 3 Cute Diamonds,\n\nHmmm kafi time se hum sath hai and mujhe kuch baate share krni hai aap logo se ki mene kya kya notice kiya hai 
+so Dem aap na bahut jyada strong ho sab kr sakte ho bs aapko koi person chahiye jo aapko support kr sake and aapki baate seriosly sune :) and Moheen aap to hohi intelligent sports me bhi aache ho but aapko bhi koi esa chahiye jiske sath aapki vibe match kre and aapke kand suna kre :) and Emuu aapki jitni age hai usse kahi jyada aap smart ho ji bade hoke aap bahut jyada successfull hoge but aapko bhi in future bhai ki zarurat hogi isliye chinta na krna me hu and aap tino ka future bahut bright hai bs aap tino patience rakhe :).\n\nHappy Sister's Day! 💚`;
+
+    const startDate = new Date(2024, 03, 24); 
+
+    /* Execution */
+    window.addEventListener('DOMContentLoaded', () => {
+      // Loader Animation
+      const progressBar = document.getElementById('progress-bar');
+      const loader = document.getElementById('loader');
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += 20;
+        progressBar.style.width = `${progress}%`;
+        if (progress >= 100) {
+          clearInterval(interval);
+          setTimeout(() => {
+            loader.style.opacity = '0';
+            loader.style.visibility = 'hidden';
+            triggerHeroTyping();
+          }, 400);
+        }
+      }, 150);
+
+      // Hero Typewriter Animation
+      function triggerHeroTyping() {
+        const phrases = [
+          "To my friend 💚", 
+          "To my best friend 🌿", 
+          "To the world's coolest sisters ✨"
+        ];
+        let phraseIdx = 0, charIdx = 0, isDeleting = false;
+        const typeTarget = document.getElementById('typing-text');
+
+        function typeLoop() {
+          const current = phrases[phraseIdx];
+          if (isDeleting) {
+            typeTarget.textContent = current.substring(0, charIdx--);
+          } else {
+            typeTarget.textContent = current.substring(0, charIdx++);
+          }
+
+          let speed = isDeleting ? 40 : 80;
+          if (!isDeleting && charIdx === current.length + 1) {
+            speed = 2200;
+            isDeleting = true;
+          } else if (isDeleting && charIdx === 0) {
+            isDeleting = false;
+            phraseIdx = (phraseIdx + 1) % phrases.length;
+            speed = 400;
+          }
+          setTimeout(typeLoop, speed);
+        }
+        typeLoop();
+      }
+
+      // Populate Timeline
+      const timelineContainer = document.getElementById('timeline-container');
+      memories.forEach((mem, index) => {
+        const item = document.createElement('div');
+        item.className = `timeline-item ${index % 2 === 0 ? 'left' : 'right'}`;
+        item.innerHTML = `
+          <div class="timeline-dot"></div>
+          <div class="timeline-card glass-card">
+            <div class="timeline-date">${mem.date}</div>
+            <div class="timeline-title">${mem.title}</div>
+            <div class="timeline-desc">${mem.desc}</div>
+          </div>
+        `;
+        timelineContainer.appendChild(item);
+      });
+
+      // Populate Reasons Cards
+      const reasonsContainer = document.getElementById('reasons-container');
+      for (let i = 1; i <= 24; i++) {
+        const card = document.createElement('div');
+        card.className = 'reason-card reveal-text';
+        card.innerHTML = `
+          <div class="reason-card-inner">
+            <div class="reason-front">#${i}</div>
+            <div class="reason-back">You are always kind, caring, and supportive!</div>
+          </div>
+        `;
+        card.addEventListener('click', () => card.classList.toggle('flipped'));
+        reasonsContainer.appendChild(card);
+      }
+
+      // Populate Envelopes
+      const envContainer = document.getElementById('envelopes-container');
+      secretMessages.forEach((msg, idx) => {
+        const env = document.createElement('div');
+        env.className = 'envelope-card reveal-text';
+        env.innerHTML = `<div class="envelope-icon">✉️</div><div>Note #${idx + 1}</div>`;
+        env.onclick = () => openModal(msg);
+        envContainer.appendChild(env);
+      });
+
+      // Populate Promises
+      const promiseContainer = document.getElementById('promises-container');
+      promises.forEach(p => {
+        const li = document.createElement('li');
+        li.className = 'promise-item';
+        li.textContent = `• ${p}`;
+        promiseContainer.appendChild(li);
+      });
+
+      // Intersection Observer for Text Reveal Animations
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            if (entry.target.id === 'final-letter-typed' && !entry.target.dataset.typed) {
+              entry.target.dataset.typed = "true";
+              typeLetterText(entry.target, letterText);
+            }
+          }
+        });
+      }, { threshold: 0.1 });
+
+      document.querySelectorAll('.timeline-item, .promise-item, .reveal-text, #final-letter-typed').forEach(el => observer.observe(el));
+
+      // Typewriter Effect for Final Letter
+      function typeLetterText(element, text) {
+        let index = 0;
+        element.textContent = "";
+        function typeChar() {
+          if (index < text.length) {
+            element.textContent += text.charAt(index);
+            index++;
+            setTimeout(typeChar, 30);
+          }
+        }
+        typeChar();
+      }
+
+      // Counter Update
+      function updateCounter() {
+        const now = new Date();
+        const diff = now - startDate;
+        document.getElementById('count-days').textContent = Math.floor(diff / (1000 * 60 * 60 * 24));
+        document.getElementById('count-hours').textContent = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        document.getElementById('count-minutes').textContent = Math.floor((diff / 1000 / 60) % 60);
+        document.getElementById('count-seconds').textContent = Math.floor((diff / 1000) % 60);
+      }
+      setInterval(updateCounter, 1000);
+      updateCounter();
+
+      // Garden Canvas
+      const canvas = document.getElementById('garden-canvas');
+      const ctx = canvas.getContext('2d');
+      function resizeCanvas() {
+        canvas.width = canvas.parentElement.clientWidth;
+        canvas.height = canvas.parentElement.clientHeight;
+      }
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+
+      const hearts = [];
+      canvas.parentElement.addEventListener('click', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        for (let i = 0; i < 8; i++) {
+          hearts.push({
+            x, y,
+            size: Math.random() * 15 + 10,
+            color: `hsl(${Math.random() * 60 + 120}, 100%, 65%)`,
+            vx: (Math.random() - 0.5) * 4,
+            vy: (Math.random() - 0.5) * 4 - 2,
+            alpha: 1
+          });
+        }
+      });
+
+      function animateGarden() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        for (let i = hearts.length - 1; i >= 0; i--) {
+          const h = hearts[i];
+          h.x += h.vx;
+          h.y += h.vy;
+          h.alpha -= 0.015;
+          ctx.globalAlpha = Math.max(0, h.alpha);
+          ctx.fillStyle = h.color;
+          ctx.font = `${h.size}px sans-serif`;
+          ctx.fillText('💚', h.x, h.y);
+          if (h.alpha <= 0) hearts.splice(i, 1);
+        }
+        requestAnimationFrame(animateGarden);
+      }
+      animateGarden();
+    });
+
+    /* Modal Controls */
+    function openModal(text) {
+      document.getElementById('modal-text').textContent = text;
+      document.getElementById('letter-modal').classList.add('active');
+    }
+    function closeModal() {
+      document.getElementById('letter-modal').classList.remove('active');
+    }
+
+    /* Confetti Surprise */
+    function triggerSurprise() {
+      confetti({
+        particleCount: 120,
+        spread: 80,
+        origin: { y: 0.6 }
+      });
+      alert("Surprise! 🎉 Happy Sister's Day! Jisne click kiya uske uper cockroach char jayega!");
+    }
+  </script>
+</body>
+</html>
